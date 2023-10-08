@@ -1,0 +1,19 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "us-east1-docker.pkg.dev/engaged-domain-345321/hexadeciman-registry/ricardo-cashmachine-ui:$_SHA_BUILD",
+        "./",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "us-east1-docker.pkg.dev/engaged-domain-345321/hexadeciman-registry/ricardo-cashmachine-ui:$_SHA_BUILD",
+      ]
+options:
+  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _SHA_BUILD: "ABC"

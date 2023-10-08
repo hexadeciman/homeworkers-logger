@@ -1,0 +1,79 @@
+{
+  "name": "cheque-service",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "@itsjustcon/react-usefetch": "^0.1.1",
+    "@mui/icons-material": "^5.14.12",
+    "@mui/material": "^5.14.12",
+    "@mui/x-data-grid": "^6.16.1",
+    "@mui/x-date-pickers": "^6.16.0",
+    "@uidotdev/usehooks": "^2.3.1",
+    "ag-grid-community": "27.2.1",
+    "ag-grid-react": "27.2.1",
+    "antd": "4.20.0-alpha.1",
+    "hexadeciman-react-github-contribution-calendar": "2.1.2",
+    "luxon": "^2.3.2",
+    "moment": "^2.29.1",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "react-router-dom": "^6.16.0",
+    "react-scripts": "5.0.0",
+    "typescript": "^4.5.4",
+    "web-vitals": "^2.1.2",
+    "xlsx": "^0.18.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@heroicons/react": "1.0.6",
+    "@testing-library/jest-dom": "5.16.4",
+    "@testing-library/react": "13.1.1",
+    "@testing-library/user-event": "14.1.1",
+    "@types/babel__generator": "^7.6.4",
+    "@types/jest": "27.4.1",
+    "@types/luxon": "^2.3.1",
+    "@types/node": "^16.11.14",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb": "^19.0.2",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "postcss": "^8.4.5",
+    "prettier": "2.8.8",
+    "tailwindcss": "^3.0.7"
+  }
+}
