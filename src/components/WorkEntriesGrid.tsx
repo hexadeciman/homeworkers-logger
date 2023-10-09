@@ -61,7 +61,11 @@ const WorkEntries = ({ selectedMonth }: { selectedMonth: string }) => {
 
   // Define ag-Grid column definitions for work entries
   const columnDefs: ColDef[] = [
-    { headerName: "Worker", field: "Worker" },
+    {
+      headerName: "Worker",
+      field: "Worker",
+      sortable: true,
+    },
     {
       headerName: "Start Time",
       field: "Start Time",

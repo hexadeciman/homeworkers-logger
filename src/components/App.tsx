@@ -14,8 +14,10 @@ export type CalendarData = {
   end: number | null;
 };
 export const App = () => {
-  const [data] = useLocalStorage<CalendarData[]>("calendarEntries", []);
-
+  const [data, setData] = useLocalStorage<CalendarData[]>(
+    "calendarEntries",
+    []
+  );
   /* const onDataCB = useCallback((data: CalendarData[]) => {
     setData(data);
   }, []);
@@ -39,7 +41,10 @@ export const App = () => {
               <Routes>
                 <Route path="/report" element={<ReportingView data={data} />} />
                 <Route path="/" element={<CalendarView data={data} />} />
-                <Route path="/new" element={<EntryForm />} />
+                <Route
+                  path="/new"
+                  element={<EntryForm data={data} setData={setData} />}
+                />
               </Routes>
             </div>
             {/* <ResultsGrid /> */}

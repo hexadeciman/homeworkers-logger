@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { TimePicker } from "@mui/x-date-pickers";
 import {
   Button,
@@ -6,10 +6,10 @@ import {
   IconButton,
   MenuItem,
   Select,
+  SelectChangeEvent,
   Typography,
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Link,
   createSearchParams,
@@ -21,33 +21,114 @@ import { CalendarData } from "./App";
 import { uuid } from "../utils/uuid";
 import dayjs, { Dayjs } from "dayjs";
 import { WorkerEdition, Worker, defaultWorkers } from "./WorkerEdition";
-export const EntryForm = ({ data }: any) => {
-  const [workers] = useLocalStorage<Worker[]>("workers", defaultWorkers);
-  const [calendarEntries, saveCalendarEntries] = useLocalStorage<
-    CalendarData[]
-  >("calendarEntries", data);
+const getLastValFromEntries = (
+  calendarEntries: CalendarData[],
+  defaultSelectedWorkerType: string
+) => {
+  const occurence = (calendarEntries as any).findLast(
+    (e: CalendarData) => e.type === defaultSelectedWorkerType
+  );
+  let startLastVal, endLastVal;
+  if (occurence?.start && occurence.end) {
+    const start = dayjs.unix(occurence.start);
+    startLastVal = {
+      hour: start.hour(),
+      min: start.minute(),
+    };
+    const end = dayjs.unix(occurence.end);
+    endLastVal = {
+      hour: end.hour(),
+      min: end.minute(),
+    };
+  }
+  return [startLastVal, endLastVal];
+};
 
+function calculateTime(
+  selectedDay: string | null,
+  selectedEntry?: number,
+  lastTime?: {
+    hour: number;
+    min: number;
+  }
+) {
+  if (selectedEntry) {
+    return dayjs.unix(selectedEntry).startOf("minute");
+  } else if (lastTime) {
+    return dayjs(selectedDay)
+      .startOf("day")
+      .set("hour", lastTime.hour)
+      .set("minute", lastTime.min);
+  } else {
+    return dayjs(selectedDay).startOf("day");
+  }
+}
+
+export const EntryForm = ({
+  data: calendarEntries,
+  setData: saveCalendarEntries,
+}: {
+  data: CalendarData[];
+  setData: (d: CalendarData[]) => void;
+}) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [workers] = useLocalStorage<Worker[]>("workers", defaultWorkers);
+
   const searchParams = new URLSearchParams(location.search);
   const selectedDay = searchParams.get("selectedDay");
   const id = searchParams.get("id");
+
   const selectedEntry = id ? calendarEntries.find((e) => e.id === id) : null;
-  const navigate = useNavigate();
+  const defaultSelectedWorkerType = selectedEntry
+    ? selectedEntry.type
+    : workers[0].name;
 
-  const [startTime, setStartTime] = useState<Dayjs>(
-    selectedEntry
-      ? dayjs.unix(selectedEntry.start as number)
-      : dayjs(selectedDay).startOf("day")
-  );
-  const [endTime, setEndTime] = useState<Dayjs>(
-    selectedEntry
-      ? dayjs.unix(selectedEntry.end as number)
-      : dayjs(selectedDay).startOf("day")
-  );
-  const [selection, onChangeSelect] = useState<string>(
-    selectedEntry ? selectedEntry.type : workers[0].name
+  const [selectedWorkerType, setSelectedWorkerType] = useState<string>(
+    defaultSelectedWorkerType
   );
 
+  const [defaultStartTime, defaultEndTime] = useMemo(() => {
+    const [lastStart, lastEnd] = getLastValFromEntries(
+      calendarEntries,
+      defaultSelectedWorkerType
+    );
+    const start = calculateTime(
+      selectedDay,
+      selectedEntry?.start as number,
+      lastStart
+    );
+    const end = calculateTime(
+      selectedDay,
+      selectedEntry?.end as number,
+      lastEnd
+    );
+    debugger;
+
+    return [start, end];
+  }, [calendarEntries, defaultSelectedWorkerType, selectedDay, selectedEntry]);
+
+  const [startTime, setStartTime] = useState<Dayjs>(defaultStartTime);
+  const [endTime, setEndTime] = useState<Dayjs>(defaultEndTime);
+
+  const onSelectedWorkerTypeChangeCB = useCallback(
+    (el: SelectChangeEvent<string>) => {
+      setSelectedWorkerType(el.target.value);
+      const [lastStart, lastEnd] = getLastValFromEntries(
+        calendarEntries,
+        el.target.value
+      );
+      if (lastStart && lastEnd) {
+        setStartTime((old) =>
+          old.set("hour", lastStart.hour).set("minute", lastStart.min)
+        );
+        setEndTime((old) =>
+          old.set("hour", lastEnd.hour).set("minute", lastEnd.min)
+        );
+      }
+    },
+    [calendarEntries]
+  );
   useEffect(() => {
     if (startTime && endTime) {
       console.log("diff", startTime.diff(endTime));
@@ -69,7 +150,7 @@ export const EntryForm = ({ data }: any) => {
           ...newCalEntries,
           {
             id: id,
-            type: selection ?? "",
+            type: selectedWorkerType ?? "",
             start: startTime.unix() ?? 0,
             end: endTime.unix() ?? 0,
           } as CalendarData,
@@ -79,7 +160,7 @@ export const EntryForm = ({ data }: any) => {
           ...(calendarEntries ?? []),
           {
             id: uuid(),
-            type: selection ?? "",
+            type: selectedWorkerType ?? "",
             start: startTime.unix() ?? 0,
             end: endTime.unix() ?? 0,
           } as CalendarData,
@@ -104,7 +185,7 @@ export const EntryForm = ({ data }: any) => {
     navigate,
     selectedDay,
     saveCalendarEntries,
-    selection,
+    selectedWorkerType,
     startTime,
   ]);
   return (
@@ -122,50 +203,43 @@ export const EntryForm = ({ data }: any) => {
           component="h5"
           fontWeight={800}
         >
-          {id ? "Edit" : "New"} Entry
+          {id ? "Edit" : "Add"} Entry / Edit Workers
         </Typography>
       </div>
       <Card className="border border-gray-100 w-full h-400 !rounded-xl !shadow-lg grid grid-flow-row gap-4 p-4">
-        <div className="grid grid-flow-col grid-cols-[1fr_40px] gap-1 items-center">
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={selection}
-            label=""
-            onChange={(el) => {
-              onChangeSelect(el.target.value);
-            }}
-          >
-            {workers.map((w) => (
-              <MenuItem key={w.id} value={w.name}>
-                {w.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <IconButton
-            size="small"
-            aria-label="Example"
-            className="flex justify-center h-[40px]"
-          >
-            <SettingsIcon fontSize="small" color="primary" />
-          </IconButton>
-        </div>
+        <Typography
+          className="whitespace-nowrap w-full leading-none"
+          variant="h5"
+          component="h5"
+          fontWeight={800}
+        >
+          {id ? "Edit" : "Add"} Entry
+        </Typography>
+
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={selectedWorkerType}
+          onChange={onSelectedWorkerTypeChangeCB}
+        >
+          {workers.map((w) => (
+            <MenuItem key={w.id} value={w.name}>
+              {w.name}
+            </MenuItem>
+          ))}
+        </Select>
 
         <TimePicker
-          defaultValue={startTime}
+          value={startTime}
           minutesStep={30}
-          onChange={(value) => {
-            setStartTime(value as any);
-          }}
+          onChange={setStartTime as any}
           label="Start Time"
         />
         <TimePicker
-          defaultValue={endTime}
+          value={endTime}
           minutesStep={30}
           minTime={startTime}
-          onChange={(value) => {
-            setEndTime(value as any);
-          }}
+          onChange={setEndTime as any}
           label="End Time"
         />
         <Button
