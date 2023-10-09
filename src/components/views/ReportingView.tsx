@@ -13,6 +13,7 @@ import { CalendarData } from "../App";
 import { useState } from "react";
 import dayjs from "dayjs";
 import SummaryGrid from "../SummaryGrid";
+import WorkEntries from "../WorkEntriesGrid";
 
 function a11yProps(index: number) {
   return {
@@ -37,6 +38,10 @@ export const ReportingView = ({ data }: { data: CalendarData[] }) => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+  };
+  const [gridMode, setGridMode] = useState(0);
+  const changeGridMode = (event: React.SyntheticEvent, newValue: number) => {
+    setGridMode(newValue);
   };
   return (
     <>
@@ -103,7 +108,12 @@ export const ReportingView = ({ data }: { data: CalendarData[] }) => {
           </Tabs>
         </Card>
         <Card className="mt-4 border border-gray-100 w-full h-400 !rounded-xl !shadow-lg grid grid-flow-row gap-4 p-4">
-          <SummaryGrid selectedMonth={selectedMonth} />
+          <Tabs value={gridMode} onChange={changeGridMode}>
+            <Tab label="Aggregated" />
+            <Tab label="Detailed" />
+          </Tabs>
+          {gridMode === 0 && <SummaryGrid selectedMonth={selectedMonth} />}
+          {gridMode === 1 && <WorkEntries selectedMonth={selectedMonth} />}
         </Card>
       </div>
     </>
