@@ -40,7 +40,7 @@ const WorkEntries = ({ selectedMonth }: { selectedMonth: string }) => {
       return {
         Worker: worker.type,
         "Start Time": startDate.format("DD-MM-YY HH:mm"),
-        "End Time": endDate.format("DD-MM-YY HH:mm"),
+        "End Time": endDate.format("HH:mm"),
         "Total Hours": totalHours,
         Price: `${totalPay} CHF`,
         "Hourly Rate": `${rate} CHF`,
@@ -64,18 +64,20 @@ const WorkEntries = ({ selectedMonth }: { selectedMonth: string }) => {
     {
       headerName: "Worker",
       field: "Worker",
+      minWidth: 90,
       sortable: true,
     },
     {
       headerName: "Start Time",
       field: "Start Time",
+      minWidth: 120,
       sortable: true,
       sort: "asc",
     },
-    { headerName: "End Time", field: "End Time" },
-    { headerName: "Hours", field: "Total Hours" },
-    { headerName: "Price", field: "Price" },
-    { headerName: "Hourly Rate", field: "Hourly Rate" },
+    { headerName: "End", minWidth: 65, field: "End Time" },
+    { headerName: "Hours", minWidth: 60, field: "Total Hours" },
+    { headerName: "Price", minWidth: 80, field: "Price" },
+    { headerName: "Rate", minWidth: 80, field: "Hourly Rate" },
   ];
 
   return (
