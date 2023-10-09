@@ -1,13 +1,14 @@
+import { Button } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import dayjs from "dayjs";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { CalendarData } from "./App";
 import { Worker } from "./WorkerEdition";
+import { useExportAGGridToExcel } from "../hooks/useExportAGGridToExcel";
+
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Button } from "@mui/material";
-import * as XLSX from "xlsx";
 
 const currencyFormatter = (params: any) => {
   return `${params.value} CHF`;
@@ -21,30 +22,11 @@ const SummaryGrid = ({ selectedMonth }: { selectedMonth: string }) => {
   const [rowData, setRowData] = useState<any>([]);
   const gridRef = useRef<AgGridReact>(null);
 
-  const exportToExcel = (title: string) => {
-    if (gridRef.current) {
-      const api = gridRef.current.api;
+  const exportToExcel = useExportAGGridToExcel(
+    `${selectedMonth}-summary`,
+    gridRef
+  );
 
-      // Get the row data
-      const rowData = (
-        api.getDataAsCsv({ columnSeparator: "\t" }) as any
-      ).split("\n");
-
-      // Create a worksheet
-      const ws = XLSX.utils.aoa_to_sheet([
-        ...rowData.map((row: any) =>
-          row.split("\t").map((cell: any) => cell.replace(/"/g, ""))
-        ),
-      ]);
-
-      // Create a workbook
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-
-      // Save the Excel file
-      XLSX.writeFile(wb, `reporting-${title}.xlsx`);
-    }
-  };
   const [rateData] = useLocalStorage<Worker[]>("workers");
   const [workerData] = useLocalStorage<CalendarData[]>("calendarEntries");
 
@@ -54,15 +36,15 @@ const SummaryGrid = ({ selectedMonth }: { selectedMonth: string }) => {
     const monthlyHoursSummary: any = {};
 
     // Filter the data for October 2023
-    const octoberWorkerData = workerData.filter((worker) => {
+    const selectedMonthWorkerData = workerData.filter((worker) => {
       const startDate = dayjs.unix(worker.start as number);
       return startDate.isSame(selectedMonth, "month");
     });
-    for (const worker of octoberWorkerData) {
+    for (const worker of selectedMonthWorkerData) {
       const rate = rates[worker.type];
       const startDate = dayjs.unix(worker.start as number);
       const endDate = dayjs.unix(worker.end as number);
-      const totalHours = endDate.diff(startDate, "hours");
+      const totalHours = endDate.diff(startDate, "minute") / 60;
       const totalPay = totalHours * rate;
 
       if (monthlyPaySummary[worker.type]) {
@@ -125,9 +107,7 @@ const SummaryGrid = ({ selectedMonth }: { selectedMonth: string }) => {
           groupDefaultExpanded={-1}
         />
       </div>
-      <Button onClick={() => exportToExcel(selectedMonth)}>
-        Export to Excel
-      </Button>
+      <Button onClick={exportToExcel}>Export to Excel</Button>
     </>
   );
 };
