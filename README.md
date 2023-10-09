@@ -4,7 +4,7 @@ A simple app to log workers hours and export reports into excel
 The goal is to help personal accounting with an easy to use interface.
 0 tracking. Everything is stored on localstorage.
 
-[Demo](chequeservice.yassin.ch)
+[Demo](https://chequeservice.yassin.ch)
 
 ## How to run
 
