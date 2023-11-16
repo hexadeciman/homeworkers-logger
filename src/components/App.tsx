@@ -1,11 +1,19 @@
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
 
 import { EntryForm } from "./EntryForm";
 import { CalendarView } from "./views/CalendarView";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { ReportingView } from "./views/ReportingView";
+
+dayjs.extend(updateLocale);
+
+dayjs.updateLocale("en", {
+  weekStart: 1,
+});
 
 export type CalendarData = {
   id: string;
@@ -18,19 +26,6 @@ export const App = () => {
     "calendarEntries",
     []
   );
-  /* const onDataCB = useCallback((data: CalendarData[]) => {
-    setData(data);
-  }, []);
-
-  const { fetchData, loading } = useLazyFetch<CalendarData[]>({
-    url: "https://6521985ba4199548356d651f.mockapi.io/calendar",
-    onComplete: onDataCB,
-  });
-
-  useEffect(() => {
-    console.log("fetchinn");
-    fetchData();
-  }, [fetchData]); */
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
