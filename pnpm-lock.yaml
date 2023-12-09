@@ -28,7 +28,7 @@ dependencies:
     version: 6.18.4(@mui/material@5.14.20)(@mui/system@5.14.20)(@types/react@18.2.43)(react-dom@18.0.0)(react@18.0.0)
   '@mui/x-date-pickers':
     specifier: ^6.16.0
-    version: 6.18.4(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.14.20)(@mui/system@5.14.20)(@types/react@18.2.43)(luxon@2.5.2)(moment@2.29.4)(react-dom@18.0.0)(react@18.0.0)
+    version: 6.18.4(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.14.20)(@mui/system@5.14.20)(@types/react@18.2.43)(dayjs@1.11.10)(luxon@2.5.2)(moment@2.29.4)(react-dom@18.0.0)(react@18.0.0)
   '@uidotdev/usehooks':
     specifier: ^2.3.1
     version: 2.4.1(react-dom@18.0.0)(react@18.0.0)
@@ -41,6 +41,9 @@ dependencies:
   antd:
     specifier: 4.20.0-alpha.1
     version: 4.20.0-alpha.1(react-dom@18.0.0)(react@18.0.0)
+  dayjs:
+    specifier: ^1.11.10
+    version: 1.11.10
   hexadeciman-react-github-contribution-calendar:
     specifier: 2.1.2
     version: 2.1.2(react-dom@18.0.0)(react@18.0.0)
@@ -2516,7 +2519,7 @@ packages:
       - '@types/react'
     dev: false
 
-  /@mui/x-date-pickers@6.18.4(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.14.20)(@mui/system@5.14.20)(@types/react@18.2.43)(luxon@2.5.2)(moment@2.29.4)(react-dom@18.0.0)(react@18.0.0):
+  /@mui/x-date-pickers@6.18.4(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.14.20)(@mui/system@5.14.20)(@types/react@18.2.43)(dayjs@1.11.10)(luxon@2.5.2)(moment@2.29.4)(react-dom@18.0.0)(react@18.0.0):
     resolution: {integrity: sha512-YqJ6lxZHBIt344B3bvRAVbdYSQz4dcmJQXGcfvJTn26VdKjpgzjAqwhlbQhbAt55audJOWzGB99ImuQuljDROA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -2562,6 +2565,7 @@ packages:
       '@mui/utils': 5.14.20(@types/react@18.2.43)(react@18.0.0)
       '@types/react-transition-group': 4.4.10
       clsx: 2.0.0
+      dayjs: 1.11.10
       luxon: 2.5.2
       moment: 2.29.4
       prop-types: 15.8.1

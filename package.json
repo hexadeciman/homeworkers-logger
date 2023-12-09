@@ -15,6 +15,7 @@
     "ag-grid-community": "27.2.1",
     "ag-grid-react": "27.2.1",
     "antd": "4.20.0-alpha.1",
+    "dayjs": "^1.11.10",
     "hexadeciman-react-github-contribution-calendar": "2.1.2",
     "luxon": "^2.3.2",
     "moment": "^2.29.1",
