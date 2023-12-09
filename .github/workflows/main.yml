@@ -34,7 +34,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           filename: app-${{ steps.tag_version.outputs.new_tag }}.zip
-          path: dist
+          path: build
 
       - name: Upload build zip artifact
         uses: actions/upload-artifact@v1
@@ -61,7 +61,7 @@ jobs:
           command: c
           cwd: "./"
           files: |
-            dist/
+            build/
             captain-definition
           outPath: deploy.tar
 
