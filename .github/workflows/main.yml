@@ -1,0 +1,81 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    - name: Bump version and push tag
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
+
+    - run: CI=true pnpm i
+    - run: pnpm test
+    - run: pnpm run build
+
+    - name: Zip build
+      uses: thedoctor0/zip-release@master
+      with:
+        filename: app-${{ steps.tag_version.outputs.new_tag }}.zip
+        path: dist
+
+    - name: Upload build zip artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: app-${{ steps.tag_version.outputs.new_tag }}.zip
+        path: app-${{ steps.tag_version.outputs.new_tag }}.zip
+
+    - name: Release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ steps.tag_version.outputs.new_tag }}
+        name: Release ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}
+        allowUpdates: true
+        artifactErrorsFailBuild: true
+        artifacts: app-${{ steps.tag_version.outputs.new_tag }}.zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
+        removeArtifacts: true
+    
+    - name: Prepare Deploy
+      uses: a7ul/tar-action@v1.1.0
+      with:
+        command: c
+        cwd: "./"
+        files: |
+          dist/
+          captain-definition
+        outPath: deploy.tar
+
+    - name: Upload build zip artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: deploy.tar
+        path: deploy.tar
+
+    - name: Deploy
+      uses: caprover/deploy-from-github@main
+      with:
+        server: '${{ secrets.DELIVERY_SERVER }}'
+        app: '${{ secrets.DELIVERY_APP_PROD }}'
+        token: '${{ secrets.DELIVERY_TOKEN_PROD }}'
+
