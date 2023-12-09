@@ -63,6 +63,7 @@ jobs:
           files: |
             build/
             captain-definition
+            nginx.conf
           outPath: deploy.tar
 
       - name: Upload build zip artifact

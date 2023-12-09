@@ -2,6 +2,7 @@
   "schemaVersion": 2,
   "dockerfileLines": [
     "FROM arm32v7/nginx:latest",
+    "COPY nginx.conf /etc/nginx/",
     "COPY build/ /usr/share/nginx/html"
   ]
 }
